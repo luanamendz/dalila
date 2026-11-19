@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5 meses de nós 💗</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    font-family: Georgia, serif;
+    color: #54263b;
+    background: #ffdce9;
+}
+
+.container {
+    width: 100%;
+    max-width: 750px;
+    min-height: 450px;
+    padding: 45px 25px;
+    background: #fff8fb;
+    border: 2px solid #f4a9c5;
+    border-radius: 25px;
+    box-shadow: 0 10px 40px #a84f7330;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#contador {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    color: #bd6a8d;
+}
+
+#mensagem {
+    font-size: clamp(22px, 4vw, 32px);
+    line-height: 1.4;
+}
+
+#gif {
+    max-width: 260px;
+    max-height: 190px;
+    object-fit: contain;
+    border-radius: 12px;
+}
+
+.preto {
+    background: black;
+    padding: 10px;
+}
+
+button {
+    border: none;
+    border-radius: 30px;
+    padding: 12px 22px;
+    margin: 8px;
+    background: #f3a8c4;
+    color: #54263b;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #ec8eb2;
+}
+
+#progresso {
+    width: 80%;
+    height: 6px;
+    background: #f8d4e2;
+    border-radius: 20px;
+    margin-top: 20px;
+}
+
+#barra {
+    width: 0%;
+    height: 100%;
+    background: #d96d9b;
+    border-radius: 20px;
+}
+
+#musica {
+    position: fixed;
+    bottom: 15px;
+    right: 15px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div id="contador">1 / 22</div>
+
+    <p id="mensagem"></p>
+
+    <img id="gif" src="" alt="GIF">
+
+    <div>
+        <button onclick="voltar()">←</button>
+        <button onclick="pausar()" id="botao">Pausar</button>
+        <button onclick="avancar()">→</button>
+    </div>
+
+    <div id="progresso">
+        <div id="barra"></div>
+    </div>
+
+    <p>Com amor, para nós. 💗</p>
+
+</div>
+
+<audio id="audio" src="assets/musica.mp3" loop></audio>
+
+<button id="musica" onclick="tocarMusica()">
+    ♫ Tocar música
+</button>
+
+<script>
+
+const paginas = [
+
+{
+texto: "Lembra que dia é hoje? Não, né, bruxa?",
+gif: "sabe que dia é hoje.gif"
+},
+
+{
+texto: "Hoje é o dia que completamos 5 meses de namoro!",
+gif: "5 meses.gif"
+},
+
+{
+texto: "166 dias que eu lançava esse passinho pra te conquistar",
+gif: "passinho.gif"
+},
+
+{
+texto: "E que nos beijamos pela primeira vez",
+gif: "dalila.gif"
+},
+
+{
+texto: "Eu mó tímida, sorrindo pra ti, querendo falar contigo, mas eu nem sabia como puxar papo contigo",
+gif: "com vergonha.gif"
+},
+
+{
+texto: "E tu indo logo em seguida que terminei de pensar isso. Aonde minha pessoa está?",
+gif: "feliz.gif"
+},
+
+{
+texto: "Enquanto o DJ lançava uma pedrada na caixa de som e todos estavam por lá dançando e bebendo",
+gif: "dj.gif"
+},
+
+{
+texto: "E a gente estava dando uma amassos no banheiro da festa",
+gif: "dividir.gif"
+},
+
+{
+texto: "E pensamos que ninguém ia suspeitar. Todos suspeitaram, kakakak!",
+gif: "kiss.gif"
+},
+
+{
+texto: "Até hoje acho engraçado que a gente dormiu a primeira vez juntas por acaso, créditos a Darvilla, akakaaa",
+gif: "com vergonha.gif"
+},
+
+{
+texto: "Hoje tu fica assim me esperando pra gente dormir juntinhas no calor",
+gif: "dormir.gif"
+},
+
+{
+texto: "Amo dormir grudada em ti, esses dias o calor tá maltratando a gente",
+gif: "mim quando nao ver.gif"
+},
+
+{
+texto: "E acho engraçado quando tu conta que alguém ainda não sabia sobre a gente, e descobrem e ficam assim",
+gif: "chocando.gif"
+},
+
+{
+texto: "E eu assim em casa sabendo que quem namora a gostosa da Salvatore sou eu",
+gif: "cachorro dancando.gif"
+},
+
+{
+texto: "Eles não terão a imagem de ver tu se maquiando em casa pra gente sair",
+gif: "vendo ela se arrumar.gif"
+},
+
+{
+texto: "Nem de te ver acordando com vontade de ir pra Salvatore",
+gif: "querendo ir embora cedo.gif"
+},
+
+{
+texto: "Amo cada detalhe teu, de te mandar indiretas às vezes, estou me policiando pra não bagunçar teus treinos",
+gif: "vergonha.gif"
+},
+
+{
+texto: "De ficar conversando e de conversar nada, simplesmente de estar juntas",
+gif: "juntes.gif"
+},
+
+{
+texto: "E enquanto eu puder te dar do meu amor, vou te encher dele",
+gif: "amor pra dar.gif"
+},
+
+{
+texto: "Sei que tu vai fofocar pros nossos filhos que eu terminei contigo, mas eles vão acreditar em mim",
+gif: "em mim.gif"
+},
+
+{
+texto: "Te amo, muito mozão, e espero que a gente fique juntas pra nossa menstruação sempre ficar na mesma data",
+gif: "regular.gif"
+},
+
+{
+texto: "Te amo ❤️",
+gif: "absolute.gif"
+}
+
+];
+
+let atual = 0;
+let intervalo;
+let pausado = false;
+
+function mostrarPagina() {
+
+    const pagina = paginas[atual];
+
+    document.getElementById("mensagem").innerText = pagina.texto;
+
+    document.getElementById("contador").innerText =
+        `${atual + 1} / ${paginas.length}`;
+
+    const imagem = document.getElementById("gif");
+
+    imagem.src = "assets/" + pagina.gif;
+
+    imagem.classList.toggle(
+        "preto",
+        pagina.gif === "dividir.gif"
+    );
+
+    imagem.onerror = function() {
+        imagem.style.display = "none";
+    };
+
+    imagem.onload = function() {
+        imagem.style.display = "block";
+    };
+
+    atualizarProgresso();
+}
+
+function avancar() {
+
+    if (atual < paginas.length - 1) {
+        atual++;
+        mostrarPagina();
+    } else {
+        clearInterval(intervalo);
+        pausado = true;
+        document.getElementById("botao").innerText = "Recomeçar";
+    }
+
+}
+
+function voltar() {
+
+    if (atual > 0) {
+        atual--;
+        mostrarPagina();
+    }
+
+}
+
+function iniciarTempo() {
+
+    clearInterval(intervalo);
+
+    intervalo = setInterval(() => {
+
+        if (!pausado) {
+            avancarAutomaticamente();
+        }
+
+    }, 5000);
+
+}
+
+function avancarAutomaticamente() {
+
+    if (atual < paginas.length - 1) {
+        atual++;
+        mostrarPagina();
+    } else {
+        clearInterval(intervalo);
+        pausado = true;
+        document.getElementById("botao").innerText = "Recomeçar";
+    }
+
+}
+
+function pausar() {
+
+    if (atual === paginas.length - 1 && pausado) {
+        atual = 0;
+        mostrarPagina();
+        pausado = false;
+        document.getElementById("botao").innerText = "Pausar";
+        iniciarTempo();
+        return;
+    }
+
+    pausado = !pausado;
+
+    document.getElementById("botao").innerText =
+        pausado ? "Continuar" : "Pausar";
+
+}
+
+function atualizarProgresso() {
+
+    const porcentagem =
+        (atual / paginas.length) * 100;
+
+    document.getElementById("barra").style.width =
+        porcentagem + "%";
+
+}
+
+function tocarMusica() {
+
+    const audio = document.getElementById("audio");
+    const botao = document.getElementById("musica");
+
+    if (audio.paused) {
+
+        audio.play();
+        botao.innerText = "♫ Pausar música";
+
+    } else {
+
+        audio.pause();
+        botao.innerText = "♫ Tocar música";
+
+    }
+
+}
+
+mostrarPagina();
+iniciarTempo();
+
+</script>
+
+</body>
+</html>
