@@ -34,15 +34,6 @@ main {
   align-items: center;
   justify-content: center;
   text-align: center;
-  position: relative;
-}
-
-#counter {
-  position: absolute;
-  top: 20px;
-  right: 24px;
-  font: 600 13px Arial, sans-serif;
-  color: #c6a98b;
 }
 
 #message {
@@ -66,24 +57,8 @@ main {
   padding: 10px;
 }
 
-#progress {
-  height: 7px;
-  width: min(700px, 85%);
-  margin-top: 30px;
-  background: #604638;
-  border-radius: 99px;
-  overflow: hidden;
-}
-
-#bar {
-  height: 100%;
-  width: 0;
-  background: #d0ad89;
-  transition: width .15s linear;
-}
-
 footer {
-  margin-top: 22px;
+  margin-top: 25px;
   color: #d5bda4;
   font-size: 15px;
 }
@@ -95,7 +70,7 @@ footer {
 
   main {
     min-height: calc(100vh - 16px);
-    padding: 55px 16px 24px;
+    padding: 35px 16px 24px;
   }
 
   #message {
@@ -113,20 +88,14 @@ footer {
 <body>
 
 <main>
-  <div id="counter">1 / 22</div>
-
   <p id="message"></p>
 
   <img id="gif" alt="GIF da lembrança" hidden>
 
-  <div id="progress">
-    <div id="bar"></div>
-  </div>
-
   <footer>Com amor, para nós. 🤎</footer>
 </main>
 
-<audio id="music" src="assets/musica.mp3" loop preload="auto" autoplay></audio>
+<audio id="music" src="musicas/musica.mp3" loop preload="auto"></audio>
 
 <script>
 const pages = [
@@ -156,8 +125,6 @@ const pages = [
 
 const message = document.getElementById("message");
 const gif = document.getElementById("gif");
-const counter = document.getElementById("counter");
-const bar = document.getElementById("bar");
 const music = document.getElementById("music");
 
 let index = 0;
@@ -167,18 +134,16 @@ function render() {
   const [text, file] = pages[index];
 
   message.textContent = text;
-  counter.textContent = `${index + 1} / ${pages.length}`;
 
   gif.hidden = !file;
   gif.classList.toggle("black", file === "dividir.gif");
 
   gif.onerror = () => {
     gif.hidden = true;
+    console.error("GIF não encontrado:", file);
   };
 
-  gif.src = `assets/${file}`;
-
-  bar.style.width = `${(index / pages.length) * 100}%`;
+  gif.src = `gif/${file}`;
 }
 
 function nextPage() {
@@ -186,7 +151,6 @@ function nextPage() {
     index++;
     render();
   } else {
-    bar.style.width = "100%";
     clearInterval(timer);
   }
 }
@@ -195,19 +159,25 @@ function nextPage() {
 async function startMusic() {
   try {
     await music.play();
-    document.removeEventListener("pointerdown", startMusic);
+
+    document.removeEventListener("click", startMusic);
+    document.removeEventListener("touchstart", startMusic);
   } catch (error) {
-    // Se o navegador bloquear, o primeiro toque inicia a música.
+    console.log("Aguardando interação para iniciar a música.");
   }
 }
 
-document.addEventListener("pointerdown", startMusic);
+// Alguns navegadores bloqueiam áudio automático.
+// Se isso acontecer, o primeiro toque na página inicia a música.
+document.addEventListener("click", startMusic);
+document.addEventListener("touchstart", startMusic, {
+  passive: true
+});
 
+render();
 startMusic();
 
-// Troca os textos e GIFs automaticamente.
-render();
-
+// Cada lembrança dura exatamente 5 segundos.
 const timer = setInterval(nextPage, duration);
 </script>
 
