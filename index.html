@@ -36,6 +36,49 @@ main {
   text-align: center;
 }
 
+#inicio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 25px;
+}
+
+#inicio h1 {
+  font-size: clamp(2rem, 6vw, 3.2rem);
+  color: #f3e3ce;
+  font-weight: normal;
+}
+
+#inicio p {
+  font-size: 1.2rem;
+  color: #d5bda4;
+}
+
+#comecar {
+  border: none;
+  border-radius: 30px;
+  padding: 15px 38px;
+  background: #c6a17d;
+  color: #3b281f;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+  font-family: Arial, sans-serif;
+}
+
+#comecar:hover {
+  background: #dfc09e;
+}
+
+#conteudo {
+  display: none;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 #message {
   font-size: clamp(1.4rem, 4vw, 2.2rem);
   font-weight: bold;
@@ -63,6 +106,13 @@ footer {
   font-size: 15px;
 }
 
+#erro {
+  color: #e8b5a5;
+  font: 13px Arial, sans-serif;
+  max-width: 300px;
+  line-height: 1.5;
+}
+
 @media (max-width: 600px) {
   body {
     padding: 8px;
@@ -88,11 +138,20 @@ footer {
 <body>
 
 <main>
-  <p id="message"></p>
 
-  <img id="gif" alt="GIF da lembrança" hidden>
+  <section id="inicio">
+    <h1>Para nós. 🤎</h1>
+    <p>Preparei uma lembrança especial para você.</p>
+    <button id="comecar">Começar ♡</button>
+    <p id="erro" hidden></p>
+  </section>
 
-  <footer>Com amor, para nós. 🤎</footer>
+  <section id="conteudo">
+    <p id="message"></p>
+    <img id="gif" alt="GIF da lembrança" hidden>
+    <footer>Com amor, para nós. 🤎</footer>
+  </section>
+
 </main>
 
 <audio id="music" src="musicas/musica.mp3" loop preload="auto"></audio>
@@ -123,18 +182,20 @@ const pages = [
   ["Te amo", "absolute.gif"]
 ];
 
+const inicio = document.getElementById("inicio");
+const conteudo = document.getElementById("conteudo");
 const message = document.getElementById("message");
 const gif = document.getElementById("gif");
 const music = document.getElementById("music");
+const erro = document.getElementById("erro");
 
 let index = 0;
-const duration = 5000;
+let timer = null;
 
 function render() {
   const [text, file] = pages[index];
 
   message.textContent = text;
-
   gif.hidden = !file;
   gif.classList.toggle("black", file === "dividir.gif");
 
@@ -155,30 +216,26 @@ function nextPage() {
   }
 }
 
-// Tenta iniciar a música automaticamente.
-async function startMusic() {
-  try {
-    await music.play();
+document.getElementById("comecar").addEventListener("click", () => {
+  // A chamada play() acontece diretamente no clique.
+  const tentativa = music.play();
 
-    document.removeEventListener("click", startMusic);
-    document.removeEventListener("touchstart", startMusic);
-  } catch (error) {
-    console.log("Aguardando interação para iniciar a música.");
-  }
-}
+  inicio.style.display = "none";
+  conteudo.style.display = "flex";
 
-// Alguns navegadores bloqueiam áudio automático.
-// Se isso acontecer, o primeiro toque na página inicia a música.
-document.addEventListener("click", startMusic);
-document.addEventListener("touchstart", startMusic, {
-  passive: true
+  index = 0;
+  render();
+
+  timer = setInterval(nextPage, 5000);
+
+  tentativa.then(() => {
+    console.log("Música iniciada!");
+  }).catch((error) => {
+    console.error("Erro ao tocar música:", error);
+    erro.hidden = false;
+    erro.textContent = "Não foi possível carregar a música. Confira se o arquivo musica.mp3 está dentro da pasta musicas.";
+  });
 });
-
-render();
-startMusic();
-
-// Cada lembrança dura exatamente 5 segundos.
-const timer = setInterval(nextPage, duration);
 </script>
 
 </body>
