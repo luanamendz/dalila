@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#3b281f">
-<title>5 meses de nós 🤎</title>
+<title>Para você 🤎</title>
 
 <style>
 * {
@@ -65,10 +65,12 @@ main {
   font-weight: bold;
   cursor: pointer;
   font-family: Arial, sans-serif;
+  transition: .2s;
 }
 
 #comecar:hover {
   background: #dfc09e;
+  transform: translateY(-2px);
 }
 
 #conteudo {
@@ -100,19 +102,6 @@ main {
   padding: 10px;
 }
 
-footer {
-  margin-top: 25px;
-  color: #d5bda4;
-  font-size: 15px;
-}
-
-#erro {
-  color: #e8b5a5;
-  font: 13px Arial, sans-serif;
-  max-width: 300px;
-  line-height: 1.5;
-}
-
 @media (max-width: 600px) {
   body {
     padding: 8px;
@@ -140,16 +129,14 @@ footer {
 <main>
 
   <section id="inicio">
-    <h1>Para nós. 🤎</h1>
+    <h1>Para você. 🤎</h1>
     <p>Preparei uma lembrança especial para você.</p>
     <button id="comecar">Começar ♡</button>
-    <p id="erro" hidden></p>
   </section>
 
   <section id="conteudo">
     <p id="message"></p>
     <img id="gif" alt="GIF da lembrança" hidden>
-    <footer>Com amor, para nós. 🤎</footer>
   </section>
 
 </main>
@@ -159,26 +146,47 @@ footer {
 <script>
 const pages = [
   ["Lembra que dia é hoje? Não, né, bruxa?", "sabe que dia é hoje.gif"],
+
   ["Hoje é o dia que completamos 5 meses de namoro!", "5 meses.gif"],
+
   ["166 dias que eu lançava esse passinho pra te conquistar", "passinho.gif"],
+
   ["E que nos beijamos pela primeira vez", "dalila.gif"],
+
   ["Eu mó tímida, sorrindo pra ti, querendo falar contigo, mas eu nem sabia como puxar papo contigo", "com vergonha.gif"],
+
   ["E tu indo logo em seguida que terminei de pensar isso. Aonde minha pessoa está?", "feliz.gif"],
+
   ["Enquanto o DJ lançava uma pedrada na caixa de som e todos estavam por lá dançando e bebendo", "dj.gif"],
+
   ["E a gente estava dando uma amassos no banheiro da festa", "dividir.gif"],
+
   ["E pensamos que ninguém ia suspeitar. Todos suspeitaram, kakakak!", "kiss.gif"],
+
   ["Até hoje acho engraçado que a gente dormiu a primeira vez juntas por acaso, créditos a Darvilla, akakaaa", "com vergonha.gif"],
+
   ["Hoje tu fica assim me esperando pra gente dormir juntinhas no calor", "dormir.gif"],
+
   ["Amo dormir grudada em ti, esses dias o calor tá maltratando a gente", "mim quando nao ver.gif"],
+
   ["E acho engraçado quando tu conta que alguém ainda não sabia sobre a gente, e descobrem e ficam assim", "chocando.gif"],
+
   ["E eu assim em casa sabendo que quem namora a gostosa da Salvatore sou eu", "cachorro dancando.gif"],
+
   ["Eles não terão a imagem de ver tu se maquiando em casa pra gente sair", "vendo ela se arrumar.gif"],
+
   ["Nem de te ver acordando com vontade de ir pra Salvatore", "querendo ir embora cedo.gif"],
+
   ["Amo cada detalhe teu, de te mandar indiretas às vezes, estou me policiando pra não bagunçar teus treinos", "vergonha.gif"],
+
   ["De ficar conversando e de conversar nada, simplesmente de estar juntas", "juntes.gif"],
+
   ["E enquanto eu puder te dar do meu amor, vou te encher dele", "amor pra dar.gif"],
+
   ["Sei que tu vai fofocar pros nossos filhos que eu terminei contigo, mas eles vão acreditar em mim", "em mim.gif"],
+
   ["Te amo, muito mozão, e espero que a gente fique juntas pra nossa menstruação sempre ficar na mesma data", "regular.gif"],
+
   ["Te amo", "absolute.gif"]
 ];
 
@@ -187,7 +195,6 @@ const conteudo = document.getElementById("conteudo");
 const message = document.getElementById("message");
 const gif = document.getElementById("gif");
 const music = document.getElementById("music");
-const erro = document.getElementById("erro");
 
 let index = 0;
 let timer = null;
@@ -196,6 +203,7 @@ function render() {
   const [text, file] = pages[index];
 
   message.textContent = text;
+
   gif.hidden = !file;
   gif.classList.toggle("black", file === "dividir.gif");
 
@@ -216,9 +224,15 @@ function nextPage() {
   }
 }
 
-document.getElementById("comecar").addEventListener("click", () => {
-  // A chamada play() acontece diretamente no clique.
-  const tentativa = music.play();
+document.getElementById("comecar").addEventListener("click", async () => {
+
+  // Inicia a música diretamente pelo clique.
+  try {
+    await music.play();
+  } catch (error) {
+    alert("Não foi possível tocar a música. Confira se musica.mp3 está dentro da pasta musicas e se o arquivo está funcionando.");
+    console.error("Erro ao iniciar música:", error);
+  }
 
   inicio.style.display = "none";
   conteudo.style.display = "flex";
@@ -226,15 +240,9 @@ document.getElementById("comecar").addEventListener("click", () => {
   index = 0;
   render();
 
-  timer = setInterval(nextPage, 5000);
+  // Cada lembrança permanece por 9 segundos.
+  timer = setInterval(nextPage, 9000);
 
-  tentativa.then(() => {
-    console.log("Música iniciada!");
-  }).catch((error) => {
-    console.error("Erro ao tocar música:", error);
-    erro.hidden = false;
-    erro.textContent = "Não foi possível carregar a música. Confira se o arquivo musica.mp3 está dentro da pasta musicas.";
-  });
 });
 </script>
 
